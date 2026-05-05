@@ -1,50 +1,91 @@
 ---
-interface Props {
-	title: string;
-}
-
-const { title } = Astro.props;
+import '../styles/global.css';
+interface Props { title?: string; }
+const { title = 'victoryil — Team Lead · Big Data · Backend' } = Astro.props;
 ---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Portfolio de Victor Daniel Gil Becerra — Team Leader Big Data & Backend en Banco Santander." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>{title}</title>
+</head>
+<body>
+  <slot />
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <script>
+    // ── Theme ──────────────────────────────────────────────────────────────────
+    const stored = localStorage.getItem('vy-theme') || 'dark';
+    document.documentElement.dataset.theme = stored;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Scroll spy
+      const ids = ['home', 'about', 'experience', 'projects', 'stack', 'hobbies'];
+      const links = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
+      function updateActive() {
+        const y = window.scrollY + 120;
+        let cur = 'home';
+        for (const id of ids) {
+          const el = document.getElementById(id);
+          if (el && el.offsetTop <= y) cur = id;
+        }
+        links.forEach(l => l.classList.toggle('active', l.dataset.section === cur));
+      }
+      window.addEventListener('scroll', updateActive, { passive: true });
+      updateActive();
+
+      // Smooth scroll on nav click
+      links.forEach(l => {
+        l.addEventListener('click', e => {
+          e.preventDefault();
+          const id = l.dataset.section!;
+          const el = document.getElementById(id);
+          if (!el) return;
+          window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' });
+        });
+      });
+
+      // Theme toggle
+      const btn = document.getElementById('theme-btn');
+      const sunIcon = document.getElementById('icon-sun');
+      const moonIcon = document.getElementById('icon-moon');
+      function setTheme(t: string) {
+        document.documentElement.dataset.theme = t;
+        localStorage.setItem('vy-theme', t);
+        const dark = t === 'dark';
+        sunIcon?.classList.toggle('hidden', !dark);
+        moonIcon?.classList.toggle('hidden', dark);
+      }
+      // init icons
+      setTheme(document.documentElement.dataset.theme || 'dark');
+      btn?.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+      });
+
+      // Reveal on scroll
+      const revealEls = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('in'); });
+      }, { threshold: 0.08 });
+      revealEls.forEach(el => io.observe(el));
+
+      // Konami code
+      const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+      let pos = 0;
+      window.addEventListener('keydown', e => {
+        if (e.key.toLowerCase() === seq[pos].toLowerCase()) {
+          pos++;
+          if (pos === seq.length) {
+            pos = 0;
+            document.body.classList.toggle('konami');
+            setTimeout(() => document.body.classList.remove('konami'), 5000);
+          }
+        } else { pos = 0; }
+      });
+    });
+  </script>
+</body>
 </html>
-<style is:global>
-	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background: #13151a;
-	}
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
-	}
-</style>

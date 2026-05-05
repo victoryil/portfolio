@@ -1,0 +1,32 @@
+---
+import { HOBBIES } from '../data/portfolio';
+---
+<section id="hobbies" class="section" data-screen-label="05 Off-hours">
+  <h2 class="section-title">
+    <span class="num">05</span>
+    <span style="color:var(--text)">off-hours</span>
+    <span style="color:var(--muted);font-size:11px;letter-spacing:0;text-transform:none">$ cat hobbies/*.md</span>
+    <span class="line"></span>
+  </h2>
+
+  <style>
+    .hob-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    @media (max-width:720px) { .hob-grid { grid-template-columns:1fr; } }
+    .hob-card {
+      border:1px solid var(--border); border-radius:12px; background:var(--panel);
+      padding:18px; display:flex; flex-direction:column; gap:10px; min-height:160px;
+    }
+    .hob-title { font-family:var(--mono); font-size:16px; font-weight:600; }
+    .hob-desc  { font-family:var(--mono); font-size:13px; color:var(--text-2); line-height:1.55; }
+  </style>
+
+  <div class="hob-grid">
+    {HOBBIES.map(h => (
+      <div class="hob-card">
+        <span class="chip green" style="width:fit-content">{h.tag}</span>
+        <div class="hob-title">{h.title}</div>
+        <div class="hob-desc">{h.desc}</div>
+      </div>
+    ))}
+  </div>
+</section>

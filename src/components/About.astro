@@ -1,0 +1,46 @@
+---
+import { PROFILE, STATS } from '../data/portfolio';
+---
+<section id="about" class="section" data-screen-label="01 About">
+  <h2 class="section-title">
+    <span class="num">01</span>
+    <span style="color:var(--text)">about</span>
+    <span style="color:var(--muted);font-size:11px;letter-spacing:0;text-transform:none">$ cat about.md</span>
+    <span class="line"></span>
+  </h2>
+
+  <style>
+    .about-grid  { display:grid; grid-template-columns:1.4fr 1fr; gap:24px; }
+    .stats-grid  { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    @media (max-width:880px) {
+      .about-grid  { grid-template-columns:1fr; }
+      .stats-grid  { grid-template-columns:repeat(2,1fr); }
+    }
+    .about-text  { font-family:var(--mono); font-size:14px; line-height:1.7; color:var(--text-2); }
+    .stat-card   { border:1px solid var(--border); border-radius:10px; padding:16px 14px; background:var(--panel); }
+    .stat-value  { font-family:var(--mono); font-size:28px; font-weight:600; color:var(--accent); letter-spacing:-0.02em; }
+    .stat-label  { font-family:var(--mono); font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:4px; }
+  </style>
+
+  <div class="about-grid">
+    <div class="about-text">
+      {PROFILE.blurb.map(p => (
+        <p style="margin:0 0 14px;text-wrap:pretty">
+          <span class="muted">›</span> {p}
+        </p>
+      ))}
+      <p style="margin:0;color:var(--muted)">
+        // siempre buscando el equilibrio entre <span class="accent">ingeniería sólida</span> y <span class="accent2">pragmatismo de equipo</span>.
+      </p>
+    </div>
+
+    <div class="stats-grid">
+      {STATS.map(s => (
+        <div class="stat-card">
+          <div class="stat-value">{s.v}</div>
+          <div class="stat-label">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

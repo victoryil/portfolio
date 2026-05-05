@@ -1,0 +1,143 @@
+---
+// Interactive terminal — easter eggs and real commands.
+// Self-contained: all JS is inlined below.
+---
+<div class="panel" id="terminal-wrap">
+  <div class="panel-head">
+    <div class="panel-dots">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="panel-title">
+      <b>victoryil</b>@portfolio:~
+    </div>
+  </div>
+  <div id="terminal-body" style="font-family:var(--mono);font-size:13px;line-height:1.6;color:var(--text);padding:14px 16px 12px;min-height:260px;max-height:360px;overflow-y:auto"></div>
+  <form id="terminal-form" style="display:flex;gap:8px;align-items:baseline;padding:0 16px 12px;border-top:1px solid var(--border);margin-top:8px">
+    <span style="color:var(--accent);font-size:13px;white-space:nowrap;font-family:var(--mono)">
+      victoryil@portfolio:~$
+    </span>
+    <input
+      id="terminal-input"
+      type="text"
+      autocomplete="off"
+      spellcheck="false"
+      style="flex:1;border:none;outline:none;background:transparent;color:var(--text);font-family:var(--mono);font-size:13px;caret-color:var(--accent);padding:0"
+    />
+  </form>
+</div>
+
+<script>
+(function() {
+  const body = document.getElementById('terminal-body')!;
+  const form = document.getElementById('terminal-form')!;
+  const input = document.getElementById('terminal-input') as HTMLInputElement;
+  const history: string[] = [];
+  let histIdx = -1;
+
+  const HELP = [
+    { t: 'Available commands:', c: 'muted' },
+    { t: '  help            show this list' },
+    { t: '  whoami          who is victoryil' },
+    { t: '  projects        list featured projects' },
+    { t: '  stack           tech stack summary' },
+    { t: '  experience      jump to timeline' },
+    { t: '  contact         email / github / linkedin' },
+    { t: '  cv              download CV (placeholder)' },
+    { t: '  rust            🦀 about the modding hobby' },
+    { t: '  clear           clear terminal' },
+  ];
+
+  const COMMANDS: Record<string, () => { t: string; c?: string }[]> = {
+    help: () => HELP,
+    whoami: () => [
+      { t: 'Victor Daniel Gil Becerra', c: 'accent' },
+      { t: 'Team Leader — Big Data & Backend @ Banco Santander' },
+      { t: 'Madrid, ES · me@victoryil.com', c: 'muted' },
+    ],
+    projects: () => [
+      { t: '→ GPE — Team Productivity Platform    [private]', c: 'accent' },
+      { t: '→ Race Manager for Rust               [open-source]', c: 'accent' },
+      { t: '→ React Calendar Library              [wip]', c: 'accent' },
+      { t: '→ ETL Framework (internal)            [internal]', c: 'accent' },
+    ],
+    stack: () => [
+      { t: 'Backend:    Java, Spring Boot, WebFlux, Kafka, PostgreSQL' },
+      { t: 'Big Data:   Spark, Databricks, Hudi, Delta Lake, Airflow' },
+      { t: 'Frontend:   React, TypeScript, Vite, TailwindCSS' },
+      { t: 'Infra:      Kubernetes, OpenShift, AWS, Docker' },
+    ],
+    experience: () => {
+      const el = document.getElementById('experience');
+      if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' });
+      return [{ t: '↓ Scrolling to experience…', c: 'muted' }];
+    },
+    contact: () => [
+      { t: 'email    me@victoryil.com', c: 'accent' },
+      { t: 'github   github.com/victoryil', c: 'accent' },
+      { t: 'linkedin linkedin.com/in/victor-daniel-gil-becerra-010140199', c: 'accent' },
+    ],
+    cv: () => [{ t: 'CV not yet available for download. Check back soon.', c: 'muted' }],
+    rust: () => [
+      { t: '🦀 Rust (the game) modding in C# / Oxide', c: 'accent' },
+      { t: 'Wrote Race Manager — a full racing-league plugin.' },
+      { t: 'Hacking on a foreign engine is the best reverse-engineering exercise.' },
+    ],
+    clear: () => { body.innerHTML = ''; return []; },
+  };
+
+  function line(text: string, cls?: string) {
+    const el = document.createElement('div');
+    el.textContent = text;
+    el.style.cssText = 'white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:13px;line-height:1.6';
+    if (cls === 'accent') el.style.color = 'var(--accent)';
+    else if (cls === 'muted') el.style.color = 'var(--muted)';
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function promptLine(cmd: string) {
+    const el = document.createElement('div');
+    el.style.cssText = 'display:flex;gap:8px;align-items:baseline';
+    el.innerHTML = `<span style="color:var(--accent);font-family:var(--mono);font-size:13px">victoryil@portfolio:~$</span> <span style="font-family:var(--mono);font-size:13px">${cmd}</span>`;
+    body.appendChild(el);
+  }
+
+  // boot
+  line('victoryil portfolio v1.0.0', 'accent');
+  line('type `help` to see available commands.', 'muted');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const cmd = input.value.trim().toLowerCase();
+    if (!cmd) return;
+    history.unshift(cmd);
+    histIdx = -1;
+    promptLine(cmd);
+    input.value = '';
+
+    const fn = COMMANDS[cmd];
+    if (fn) {
+      const out = fn();
+      out.forEach(o => line(o.t, o.c));
+    } else {
+      line(`command not found: ${cmd}`, 'muted');
+      line("type `help` for the command list.", 'muted');
+    }
+    if (cmd !== 'clear') line('', undefined);
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (histIdx < history.length - 1) { histIdx++; input.value = history[histIdx]; }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (histIdx > 0) { histIdx--; input.value = history[histIdx]; }
+      else { histIdx = -1; input.value = ''; }
+    }
+  });
+
+  // click anywhere in wrap focuses input
+  document.getElementById('terminal-wrap')?.addEventListener('click', () => input.focus());
+})();
+</script>

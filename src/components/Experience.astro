@@ -1,0 +1,53 @@
+---
+import { EXPERIENCE } from '../data/portfolio';
+---
+<section id="experience" class="section" data-screen-label="02 Experience">
+  <h2 class="section-title">
+    <span class="num">02</span>
+    <span style="color:var(--text)">experience</span>
+    <span style="color:var(--muted);font-size:11px;letter-spacing:0;text-transform:none">$ git log --oneline</span>
+    <span class="line"></span>
+  </h2>
+
+  <style>
+    .timeline { display:flex; flex-direction:column; gap:14px; }
+    .job {
+      display:grid; grid-template-columns:180px 1fr; gap:24px;
+      padding:20px 22px;
+      border:1px solid var(--border); border-radius:10px; background:var(--panel);
+    }
+    @media (max-width:720px) { .job { grid-template-columns:1fr; gap:8px; } }
+    .job-period { font-family:var(--mono); font-size:12px; color:var(--muted); padding-top:4px; }
+    .job-role   { font-family:var(--mono); font-size:17px; font-weight:600; color:var(--text); margin-bottom:2px; }
+    .job-company { font-family:var(--mono); font-size:13px; color:var(--accent-2); margin-bottom:12px; }
+    .bullets { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px; font-family:var(--mono); font-size:13px; color:var(--text-2); line-height:1.55; }
+    .bullet  { display:flex; gap:10px; }
+    .stack-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+  </style>
+
+  <div class="timeline">
+    {EXPERIENCE.map(e => (
+      <div class="job">
+        <div class="job-period">
+          <div style="color:var(--accent);font-weight:500">{e.period}</div>
+          <div style="margin-top:4px">{e.location}</div>
+        </div>
+        <div>
+          <div class="job-role">{e.role}</div>
+          <div class="job-company">@ {e.company}</div>
+          <ul class="bullets">
+            {e.bullets.map(b => (
+              <li class="bullet">
+                <span class="accent" style="flex-shrink:0">▸</span>
+                <span style="text-wrap:pretty">{b}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="stack-row">
+            {e.stack.map(s => <span class="chip">{s}</span>)}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,43 @@
+---
+import { STACK } from '../data/portfolio';
+---
+<section id="stack" class="section" data-screen-label="04 Stack">
+  <h2 class="section-title">
+    <span class="num">04</span>
+    <span style="color:var(--text)">stack</span>
+    <span style="color:var(--muted);font-size:11px;letter-spacing:0;text-transform:none">$ echo $TECH_STACK</span>
+    <span class="line"></span>
+  </h2>
+
+  <style>
+    .stack-grid  { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    @media (max-width:720px) { .stack-grid { grid-template-columns:1fr; } }
+    .stack-card  { border:1px solid var(--border); border-radius:10px; background:var(--panel); padding:16px 18px; }
+    .stack-title {
+      font-family:var(--mono); font-size:12px; color:var(--muted);
+      text-transform:uppercase; letter-spacing:0.14em;
+      margin-bottom:10px; display:flex; align-items:center; gap:8px;
+    }
+    .stack-dot {
+      width:6px; height:6px; border-radius:50%;
+      background:var(--accent); box-shadow:0 0 8px var(--accent); flex-shrink:0;
+    }
+    .stack-count { color:var(--muted); text-transform:none; letter-spacing:0; }
+    .stack-chips { display:flex; flex-wrap:wrap; gap:6px; }
+  </style>
+
+  <div class="stack-grid">
+    {Object.entries(STACK).map(([category, items]) => (
+      <div class="stack-card">
+        <div class="stack-title">
+          <span class="stack-dot"></span>
+          {category}
+          <span class="stack-count">· {items.length}</span>
+        </div>
+        <div class="stack-chips">
+          {items.map(it => <span class="chip">{it}</span>)}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
