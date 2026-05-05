@@ -1,0 +1,17 @@
+---
+import { PROFILE } from '../data/portfolio';
+const year = new Date().getFullYear();
+---
+<footer style="
+  margin-top:96px; padding:32px 0 64px;
+  border-top:1px dashed var(--border);
+  font-family:var(--mono); font-size:12px; color:var(--muted);
+  display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+">
+  <div>
+    <span class="accent">▌</span> built with astro, css &amp; a lot of <span class="accent">::selection</span>.
+  </div>
+  <div>
+    © {year} {PROFILE.name} · last commit: today
+  </div>
+</footer>

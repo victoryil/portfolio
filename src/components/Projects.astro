@@ -1,0 +1,88 @@
+---
+import { PROJECTS } from '../data/portfolio';
+
+const STATUS_MAP = {
+  'private':     { cls: 'warn',  label: 'private' },
+  'open-source': { cls: 'green', label: 'open source' },
+  'wip':         { cls: 'blue',  label: 'in progress' },
+  'internal':    { cls: 'pink',  label: 'internal' },
+} as const;
+
+// SVG paths per icon kind
+const ICONS = {
+  gpe:      '<path d="M3 12h4l3-7 4 14 3-7h4"/>',
+  rust:     '<circle cx="12" cy="12" r="9"/><path d="M8 12c2 0 2-2 4-2s2 2 4 2"/><path d="M9 8l-1-2M15 8l1-2M9 16l-1 2M15 16l1 2"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  etl:      '<path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/>',
+};
+---
+<section id="projects" class="section" data-screen-label="03 Projects">
+  <h2 class="section-title">
+    <span class="num">03</span>
+    <span style="color:var(--text)">projects</span>
+    <span style="color:var(--muted);font-size:11px;letter-spacing:0;text-transform:none">$ ls -la projects/</span>
+    <span class="line"></span>
+  </h2>
+
+  <style>
+    .proj-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    @media (max-width:720px) { .proj-grid { grid-template-columns:1fr; } }
+    .proj-card {
+      border:1px solid var(--border); border-radius:12px; background:var(--panel);
+      padding:18px; display:flex; flex-direction:column; gap:12px;
+      transition:transform 200ms ease, border-color 200ms ease;
+      cursor:default; position:relative; overflow:hidden;
+    }
+    .proj-card:hover { transform:translateY(-2px); border-color:var(--border-strong); }
+    .proj-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+    .proj-icon {
+      width:40px; height:40px; border-radius:8px;
+      background:var(--panel-2); border:1px solid var(--border);
+      display:grid; place-items:center; color:var(--accent); flex-shrink:0;
+    }
+    .proj-name { font-family:var(--mono); font-size:16px; font-weight:600; color:var(--text); text-wrap:pretty; }
+    .proj-year { font-family:var(--mono); font-size:11px; color:var(--muted); }
+    .proj-desc { font-family:var(--mono); font-size:13px; color:var(--text-2); line-height:1.6; }
+    .proj-foot { display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:8px; }
+    .proj-stack { display:flex; flex-wrap:wrap; gap:6px; }
+  </style>
+
+  <div class="proj-grid">
+    {PROJECTS.map(p => {
+      const st = STATUS_MAP[p.status];
+      const svgPath = ICONS[p.icon] ?? ICONS.etl;
+      return (
+        <div class="proj-card">
+          <div class="proj-head">
+            <div style="display:flex;gap:12px;align-items:flex-start;min-width:0;flex:1 1 200px">
+              <div class="proj-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={svgPath} />
+              </div>
+              <div style="min-width:0">
+                <div class="proj-name">{p.name}</div>
+                <div class="proj-year">{p.year}</div>
+              </div>
+            </div>
+            <span class={`chip ${st.cls}`} style="flex-shrink:0">{st.label}</span>
+          </div>
+
+          <div class="proj-desc">{p.desc}</div>
+
+          <div class="proj-stack">
+            {p.stack.map(s => <span class="chip">{s}</span>)}
+          </div>
+
+          <div class="proj-foot">
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">
+              {p.link ? '// public repo' : '// closed source'}
+            </span>
+            {p.link
+              ? <a href={p.link} target="_blank" rel="noreferrer" style="font-family:var(--mono);font-size:13px">visit →</a>
+              : <span style="font-family:var(--mono);font-size:13px;color:var(--muted)">—</span>
+            }
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</section>
